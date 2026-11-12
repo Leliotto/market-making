@@ -1,14 +1,15 @@
 # Market making under inventory risk
 
-**Avellaneda-Stoikov vs. reinforcement learning, backtested on real crypto order book data.**
+**Avellaneda-Stoikov market making, backtested on real crypto order book data.**
 
 A market maker earns the bid-ask spread but carries inventory risk: every fill leaves it long or short
 until the opposite trade arrives, and fills tend to come right before the price moves against it
-(adverse selection). This project asks how much an inventory-aware strategy improves on naive quoting,
-and whether a reinforcement-learning agent can beat the closed-form Avellaneda-Stoikov solution on real data.
+(adverse selection). This project tests the closed-form Avellaneda-Stoikov strategy on 24 hours of real
+Binance data: how well its model fits, how much inventory control helps, and how much latency and a simple
+order book signal (the microprice) change the result.
 
-> Status: Avellaneda-Stoikov study on 24 hours of real data is complete (see [Results](#results)).
-> Next: a reinforcement-learning agent (see [Roadmap](#roadmap)).
+> Status: the Avellaneda-Stoikov study is complete (see [Results](#results)).
+> Possible extensions are listed under [Next steps](#next-steps).
 
 ## The model
 
@@ -202,8 +203,8 @@ On this day, on liquid crypto pairs with a one-tick spread, a passive Avellaneda
 the book every 100 ms was systematically picked off. Inventory control reduces risk, the microprice and lower latency
 reduce the damage, but none of them removes it. The missing ingredients are the ones real market makers
 compete on: queue position at the best price, speed well below 100 ms, and short-term signals stronger than
-the top-of-book imbalance. The first two are beyond what this dataset can test; the RL agent (next step) tests
-how much of the loss can be recovered with richer signals from the book.
+the top-of-book imbalance. The first two are beyond what this dataset can test; a
+reinforcement-learning agent with richer book signals is a natural next step (see [Next steps](#next-steps)).
 
 ## Lessons from the first run
 
@@ -227,15 +228,12 @@ through our quote), which is why every run now also reports the optimistic `touc
 - **One day, one regime.** All results come from a single 24-hour recording in which all three pairs fell.
 - **Book snapshots every 100 ms**, so very fast price moves between snapshots are not observed.
 
-## Roadmap
+## Next steps
 
-- [x] Recorder, loader, calibration, Avellaneda-Stoikov, baseline, backtester, tests
-- [x] Record 24 h for BTC/USDT, ETH/USDT, SOL/USDT
-- [x] Calibration consistent with the fill model; both fill models; Newey-West t-statistics
-- [x] Microprice-centred variant and latency sweep
-- [ ] Record several more days to test whether results hold across market regimes
-- [ ] RL agent (DQN) choosing spread and skew from inventory, volatility and order-book imbalance
-- [ ] Compare AS vs RL out of sample under both fill models; sensitivity to latency and fees
+- Record several more days, to test whether the results hold across market regimes.
+- A reinforcement-learning agent (e.g. DQN) that chooses spread and skew from inventory, volatility and
+  order book imbalance, compared with Avellaneda-Stoikov out of sample under both fill models.
+- A fill model with queue position at the best price, where the exponential model breaks down.
 
 ## References
 
